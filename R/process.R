@@ -5,7 +5,7 @@ filterNewsPages <- function(webpage){
     rvest::html_elements("main") %>%
     rvest::html_elements("a") %>%
     rvest::html_attr("href") %>%
-    .[gdata::startsWith(., "https")] %>%
+    .[gdata::startsWith(., "http")] %>%
     unique()
 }
 
@@ -77,3 +77,15 @@ getWebpage <- function(link){ #, year, outputDir = "result"){
   webpage <- rvest::read_html(link)
   return(webpage)
 }
+
+#' @export
+downloadQuery <- function(query, years){
+  for(year in years){
+      cat(paste0(">>>>> Processing ", year, " <<<<<\n"))
+      getQueryLink(query, year) %>%
+      getWebpage() %>%
+      filterNewsPages() %>%
+      saveLinks(paste(year))
+  }
+}
+

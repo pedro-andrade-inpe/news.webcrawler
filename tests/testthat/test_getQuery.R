@@ -26,4 +26,13 @@ test_that("getQuery", {
     expect_equal(length(list.files("2020")), 5)
 
     unlink("2020", recursive = TRUE)
+
+    downloadQuery("quimica+quantica", 2018:2020)
+    expect_equal(length(list.files("2018")), 2)
+    expect_equal(length(list.files("2019")), 4)
+    expect_equal(length(list.files("2020")), 5)
+
+    unlink("2018", recursive = TRUE)
+    unlink("2019", recursive = TRUE)
+    unlink("2020", recursive = TRUE)
 })
