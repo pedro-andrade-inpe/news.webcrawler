@@ -1,8 +1,4 @@
-test_that("getQuery", {
-    result <- getQueryLink("sustentabilidade", 2020)
-
-    expect_equal(result, "https://busca.folha.uol.com.br/search?q=sustentabilidade&periodo=personalizado&sd=01%2F01%2F2020&ed=31%2F12%2F2020&site=todos")
-
+test_that("all", {
     result <- getQueryLink("quimica+quantica", 2020)
 
     webpage <- getWebpage(result)
@@ -35,4 +31,18 @@ test_that("getQuery", {
     unlink("2018", recursive = TRUE)
     unlink("2019", recursive = TRUE)
     unlink("2020", recursive = TRUE)
+
+    result <- getQueryLink("sustentabilidade", 2020)
+
+    expect_equal(result, "https://busca.folha.uol.com.br/search?q=sustentabilidade&periodo=personalizado&sd=01%2F01%2F2020&ed=31%2F12%2F2020&site=todos")
+
+    webpage <- getWebpage(result)
+
+    news <- filterNewsPages(webpage)
+
+    expect_equal(length(news), 30)
+
+    nextresults <- filterNextResults(webpage)
+
+    expect_equal(length(nextresults), 5)
 })

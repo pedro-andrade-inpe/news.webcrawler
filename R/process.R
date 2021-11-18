@@ -11,10 +11,15 @@ filterNewsPages <- function(webpage){
 
 #' @export
 filterNextResults <- function(webpage){
-  links <- filterLinks(webpage) %>%
-    stringr::str_subset("search", negate = TRUE)
+  links <- webpage %>%
+    rvest::html_elements("main") %>%
+    rvest::html_elements("a") %>%
+    rvest::html_attr("href") %>%
+    as.character() %>%
+    stringr::str_subset("search") %>%
+    unique()
 
-  return(links) #(links[nchar(links) > 66])
+  return(links)
 }
 
 #' @export
@@ -36,7 +41,7 @@ saveLinks <- function(links, directory){
     dir.create(directory)
 
   for(link in links){
-    cat(paste0("Saving link ", link, "\n"))
+    message(paste0("Saving link ", link, "\n"))
     saveLink(link, directory)
   }
 }
@@ -81,7 +86,7 @@ getWebpage <- function(link){ #, year, outputDir = "result"){
 #' @export
 downloadQuery <- function(query, years){
   for(year in years){
-      cat(paste0(">>>>> Processing ", year, " <<<<<\n"))
+      message(paste0(">>>>> Processing ", year, " <<<<<\n"))
       getQueryLink(query, year) %>%
       getWebpage() %>%
       filterNewsPages() %>%
