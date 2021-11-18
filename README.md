@@ -1,6 +1,6 @@
 # news.webcrawler
 
-Package that implements a webcrawler to search for news in Brazilian companies. For now it works only with Folha de Sao Paulo.
+Package that implements a webcrawler to download news published by Brazilian companies. For now it works only with Folha de Sao Paulo.
 
 To install the package:
 
