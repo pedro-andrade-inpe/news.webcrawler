@@ -1,0 +1,28 @@
+Package: news.webcrawler
+Type: Package
+Title: Webcrawler for Brazilian newspapers
+Version: 0.0-1
+Date: 2021-11-18
+Authors@R: c(person('Pedro', 'Andrade', role = c('aut', 'cre'), email = 'pedro.andrade@inpe.br'))
+Maintainer: Pedro R. Andrade <pedro.andrade@inpe.br>
+Description: A set functions to download and process news from Brazilian newspapers.
+Depends: R (>= 3.4)
+Encoding: UTF-8
+License: GPL-2 | file LICENSE
+URL: https://github.com/pedro-andrade-inpe/news.webcrawler/
+BugReports: https://github.com/pedro-andrade-inpe/news.webcrawler/issues
+Imports:
+    dplyr,
+    tibble,
+    tidyr,
+    stringr,
+    dequer,
+    gsubfn,
+    gdata
+Suggests:
+    knitr,
+    rmarkdown
+RoxygenNote: 7.1.1
+VignetteBuilder:
+  knitr,
+  rmarkdown
