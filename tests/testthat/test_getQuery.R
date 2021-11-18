@@ -45,4 +45,9 @@ test_that("all", {
     nextresults <- filterNextResults(webpage)
 
     expect_equal(length(nextresults), 5)
+
+
+    links <- getAllLinks("sustentabilidade", 2020)
+
+    expect_equal(length(links), 841)
 })

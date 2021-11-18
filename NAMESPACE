@@ -3,6 +3,7 @@
 export(downloadQuery)
 export(filterNewsPages)
 export(filterNextResults)
+export(getAllLinks)
 export(getContent)
 export(getQueryLink)
 export(getWebpage)

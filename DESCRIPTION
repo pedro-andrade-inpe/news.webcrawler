@@ -18,6 +18,7 @@ Imports:
     stringr,
     dequer,
     gsubfn,
+    urltools,
     gdata
 Suggests:
     knitr,

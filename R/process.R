@@ -6,6 +6,7 @@ filterNewsPages <- function(webpage){
     rvest::html_elements("a") %>%
     rvest::html_attr("href") %>%
     .[gdata::startsWith(., "http")] %>%
+    stringr::str_subset("search", negate = TRUE) %>%
     unique()
 }
 
@@ -81,6 +82,36 @@ saveLink <- function(link, directory){
 getWebpage <- function(link){ #, year, outputDir = "result"){
   webpage <- rvest::read_html(link)
   return(webpage)
+}
+
+#' @export
+getAllLinks <- function(query, year){
+  search_results <- list()
+  mystack <- dequer::stack()
+  results <- c()
+  first <- getQueryLink(query, year)
+  dequer::push(mystack, first)
+
+  while(length(mystack) > 0){
+    next_page <- dequer::pop(mystack)
+    message(paste0("Procesing ", next_page, "\n"))
+    webpage <- getWebpage(next_page)
+
+    news <- filterNewsPages(webpage)
+    results <- c(results, news)
+
+    nextresults <- filterNextResults(webpage)
+
+    for(nextresult in nextresults){
+      sr <- urltools::param_get(nextresult)$sr
+      if(is.null(search_results[[sr]])){
+        search_results[[sr]] <- TRUE
+        dequer::push(mystack, nextresult)
+      }
+    }
+  }
+
+  return(unique(results))
 }
 
 #' @export
