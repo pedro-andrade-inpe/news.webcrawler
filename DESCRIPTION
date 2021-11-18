@@ -19,6 +19,7 @@ Imports:
     dequer,
     gsubfn,
     urltools,
+    progressr,
     gdata
 Suggests:
     knitr,

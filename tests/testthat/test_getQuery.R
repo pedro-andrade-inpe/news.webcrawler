@@ -40,7 +40,7 @@ test_that("all", {
 
     news <- filterNewsPages(webpage)
 
-    expect_equal(length(news), 30)
+    expect_equal(length(news), 25)
 
     nextresults <- filterNextResults(webpage)
 

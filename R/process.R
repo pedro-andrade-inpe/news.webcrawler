@@ -41,8 +41,11 @@ saveLinks <- function(links, directory){
   if(!dir.exists(directory))
     dir.create(directory)
 
+  total <- length(links)
+  message(paste0("Saving ", total, " links"))
+  p <- progressr::progressor(total)
   for(link in links){
-    message(paste0("Saving link ", link, "\n"))
+    p()
     saveLink(link, directory)
   }
 }
@@ -54,7 +57,7 @@ getContent <- function(link){
   title <- webpage %>%
     rvest::html_elements("title") %>%
     rvest::html_text() %>%
-  .[1] %>%
+    .[1] %>%
     as.character()
 
   text <- webpage %>%
@@ -74,8 +77,11 @@ saveLink <- function(link, directory){
     paste0(".txt")
 
   outputFile <- paste0(directory, "/", filename)
-  content <- getContent(link)
-  write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+  if(!file.exists(outputFile)){
+    content <- getContent(link)
+    write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
+  }
 }
 
 #' @export
@@ -86,15 +92,19 @@ getWebpage <- function(link){ #, year, outputDir = "result"){
 
 #' @export
 getAllLinks <- function(query, year){
+  message("Fetching links")
   search_results <- list()
   mystack <- dequer::stack()
   results <- c()
   first <- getQueryLink(query, year)
   dequer::push(mystack, first)
 
+  p <- progressr::progressor(333)
+
   while(length(mystack) > 0){
+    p()
     next_page <- dequer::pop(mystack)
-    message(paste0("Procesing ", next_page, "\n"))
+    #message(paste0("Procesing ", next_page, "\n"))
     webpage <- getWebpage(next_page)
 
     news <- filterNewsPages(webpage)
@@ -117,11 +127,8 @@ getAllLinks <- function(query, year){
 #' @export
 downloadQuery <- function(query, years){
   for(year in years){
-      message(paste0(">>>>> Processing ", year, " <<<<<\n"))
-      getQueryLink(query, year) %>%
-      getWebpage() %>%
-      filterNewsPages() %>%
-      saveLinks(paste(year))
+    message(paste0("Processing ", year))
+    getAllLinks(query, year) %>%
+    saveLinks(paste(year))
   }
 }
-
