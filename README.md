@@ -10,7 +10,7 @@ install.packages("devtools")
 devtools::install_github("pedro-andrade-inpe/news.webcrawler", upgrade = "always")
 ```
 
-To download all news containing "sustentabilidade" from 2018 to 2020, in separate folders by year.
+To download all news containing "sustentabilidade" from 2018 to 2020, in separate folders by year. If the connection fails and the command stop without reading all files, you can just run it again and it will continue from the last successfull download.
 
 ```R
 progressr::handlers(global = TRUE)
