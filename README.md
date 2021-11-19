@@ -10,10 +10,18 @@ install.packages("devtools")
 devtools::install_github("pedro-andrade-inpe/news.webcrawler", upgrade = "always")
 ```
 
-To download all news containing "sustentabilidade" from 2018 to 2020, in separate folders by year. If the connection fails and the command stop without reading all files, you can just run it again and it will continue from the last successfull download.
+To download all news containing "procrastinar" from 2018 to 2020, in separate folders by year.
 
 ```R
 progressr::handlers(global = TRUE)
 
-news.webcrawler::downloadQuery("sustentabilidade", 2018:2020)
+news.webcrawler::downloadQuery("procrastinar", 2018:2020)
+```
+
+If the connection fails and the command stop without reading all files, you can just run it again and it will continue from the last successfull download.
+
+To use more than one keyword, use `+` instead of ` `:
+
+```R
+news.webcrawler::downloadQuery("ciclo+nitrogenio", 2015:2020)
 ```
