@@ -33,6 +33,10 @@ getQueryLink <- function(query, year){
                       year,
                       "&site=todos")
 
+#  https://busca.estadao.com.br/?tipo_conteudo=Todos&quando=01%2F01%2F2010-18%2F11%2F2010&q=fisica%20quantica
+
+#  https://valor.globo.com/busca?q=fisica+quantica&page=1&order=recent&from=2021-01-01T00%3A00%3A00-0300&to=2021-11-18T23%3A59%3A59-0300
+
   return(fullQuery)
 }
 
@@ -42,7 +46,7 @@ saveLinks <- function(links, directory){
     dir.create(directory)
 
   total <- length(links)
-  message(paste0("Saving ", total, " links"))
+  message(paste0("Saving ", total, " links into directory '", directory, "'"))
   p <- progressr::progressor(total)
   for(link in links){
     p()
@@ -91,7 +95,7 @@ getWebpage <- function(link){ #, year, outputDir = "result"){
 }
 
 #' @export
-getAllLinks <- function(query, year){
+getAllLinks <- function(query, year, dirname){
   message("Fetching links")
   search_results <- list()
   mystack <- dequer::stack()
@@ -121,14 +125,21 @@ getAllLinks <- function(query, year){
     }
   }
 
-  return(unique(results))
+  result <- unique(results)
+ # write.table(result, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
+  return(result)
 }
 
 #' @export
 downloadQuery <- function(query, years){
+  dirname <- paste0("FSP-", query %>% stringr::str_replace_all("\\+", "_"))
+
+  if(!dir.exists(dirname))
+    dir.create(dirname)
+
   for(year in years){
     message(paste0("Processing ", year))
-    getAllLinks(query, year) %>%
-    saveLinks(paste(year))
+    getAllLinks(query, year, dirname) %>%
+    saveLinks(paste0(dirname, "/", year))
   }
 }
