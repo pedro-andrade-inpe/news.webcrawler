@@ -24,13 +24,11 @@ test_that("all", {
     unlink("2020", recursive = TRUE)
 
     downloadQuery("quimica+quantica", 2018:2020)
-    expect_equal(length(list.files("2018")), 2)
-    expect_equal(length(list.files("2019")), 4)
-    expect_equal(length(list.files("2020")), 5)
+    expect_equal(length(list.files("FSP-quimica_quantica/2018")), 2)
+    expect_equal(length(list.files("FSP-quimica_quantica/2019")), 4)
+    expect_equal(length(list.files("FSP-quimica_quantica/2020")), 5)
 
-    unlink("2018", recursive = TRUE)
-    unlink("2019", recursive = TRUE)
-    unlink("2020", recursive = TRUE)
+    unlink("FSP-quimica_quantica", recursive = TRUE)
 
     result <- getQueryLink("sustentabilidade", 2020)
 
@@ -45,7 +43,6 @@ test_that("all", {
     nextresults <- filterNextResults(webpage)
 
     expect_equal(length(nextresults), 5)
-
 
     links <- getAllLinks("sustentabilidade", 2020)
 
