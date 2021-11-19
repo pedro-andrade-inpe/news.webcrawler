@@ -72,12 +72,18 @@ getContent <- function(link){
   return(c(title, text))
 }
 
+stringAsFileName <- function(mystring)
+{
+  mystring %>%
+    stringr::str_replace_all("/", "_") %>%
+    stringr::str_replace_all("\\?", "_") %>%
+    stringr::str_replace_all("=", "_")
+}
+
 #' @export
 saveLink <- function(link, directory){
   filename <- substr(link, 9, nchar(link)) %>%
-    stringr::str_replace_all("/", "_") %>%
-    stringr::str_replace_all("\\?", "_") %>%
-    stringr::str_replace_all("=", "_") %>%
+    stringAsFileName() %>%
     paste0(".txt")
 
   outputFile <- paste0(directory, "/", filename)
@@ -89,14 +95,20 @@ saveLink <- function(link, directory){
 }
 
 #' @export
-getWebpage <- function(link){ #, year, outputDir = "result"){
-  webpage <- rvest::read_html(link)
-  return(webpage)
+getWebpage <- function(link){
+  return(rvest::read_html(link))
 }
 
 #' @export
 getAllLinks <- function(query, year, dirname){
   message("Fetching links")
+  outputFile <- paste0(dirname, "/", year, ".txt")
+
+  if(file.exists(outputFile)){
+    message(paste0("Found local links in '", outputFile, "'"))
+    return(read.table(outputFile, header =FALSE)$V1)
+  }
+
   search_results <- list()
   mystack <- dequer::stack()
   results <- c()
@@ -126,13 +138,13 @@ getAllLinks <- function(query, year, dirname){
   }
 
   result <- unique(results)
- # write.table(result, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(result, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
   return(result)
 }
 
 #' @export
 downloadQuery <- function(query, years){
-  dirname <- paste0("FSP-", query %>% stringr::str_replace_all("\\+", "_"))
+  dirname <- paste0("FSP-", query %>% stringAsFileName())
 
   if(!dir.exists(dirname))
     dir.create(dirname)
