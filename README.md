@@ -1,6 +1,6 @@
 # news.webcrawler
 
-Package that implements a webcrawler to download news published by Brazilian companies. For now it works only with Folha de Sao Paulo.
+Package that implements a webcrawler to download news published by Brazilian companies. For now it works only with FSP. All the data collected using this software will be used only with scientific purposes.
 
 To install the package:
 
