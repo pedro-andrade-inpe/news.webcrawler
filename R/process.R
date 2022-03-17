@@ -90,7 +90,7 @@ saveLink <- function(link, directory){
 
   if(!file.exists(outputFile)){
     content <- getContent(link)
-    write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE, encoding = "UTF-8")
+    write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
   }
 }
 
