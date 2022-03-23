@@ -1,8 +1,8 @@
 Package: news.webcrawler
 Type: Package
 Title: Webcrawler for Brazilian newspapers
-Version: 0.1-0
-Date: 2021-11-18
+Version: 0.2-0
+Date: 2022-03-22
 Authors@R: c(person('Pedro', 'Andrade', role = c('aut', 'cre'), email = 'pedro.andrade@inpe.br'))
 Maintainer: Pedro R. Andrade <pedro.andrade@inpe.br>
 Description: A set functions to download and process news from Brazilian newspapers.
@@ -24,7 +24,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder:
   knitr,
   rmarkdown
