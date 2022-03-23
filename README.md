@@ -10,7 +10,7 @@ install.packages("devtools")
 devtools::install_github("pedro-andrade-inpe/news.webcrawler", upgrade = "always")
 ```
 
-To download all news from "estadao" containing "procrastinar" from 2018 to 2020, in separate folders by year.
+To download all news from "folha" and "estadao" containing "procrastinar" from 2018 to 2020, in separate folders by year.
 
 ```R
 progressr::handlers(global = TRUE)
