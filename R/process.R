@@ -28,6 +28,18 @@ filterNewsPages <- function(webpage, journal = NULL){
       stringr::str_subset("noticias|blogs") %>%
       unique() %>%
       sort())
+
+  if(journal == "valor")
+    return(webpage %>%
+      rvest::html_elements("body") %>%
+      rvest::html_elements("a") %>%
+      rvest::html_attr("href") %>%
+      stringr::str_subset("valor.globo.com") %>%
+      stringr::str_subset("https://valor.globo.com", negate = TRUE) %>%
+      unique() %>%
+      sort() %>%
+      paste0("https:", .) %>%
+      subset(nchar(.) > 10))
 }
 
 #' @export
@@ -109,10 +121,17 @@ getContent <- function(link){
 
 stringAsFileName <- function(mystring)
 {
-  mystring %>%
+  result <- mystring %>%
     stringr::str_replace_all("/", "_") %>%
     stringr::str_replace_all("\\?", "_") %>%
-    stringr::str_replace_all("=", "_")
+    stringr::str_replace_all("=", "_") %>%
+    stringr::str_replace_all("&", "_") %>%
+    stringr::str_replace_all("%", "_")
+
+  if(nchar(result) > 150)
+    result <- substr(result, 1, 150)
+
+  return(result)
 }
 
 #' @export
@@ -195,6 +214,58 @@ getAllLinksEstadao <- function(query, year){
   return(unique(results))
 }
 
+getValorQueryLink <- function(query, day, month, year){
+  paste0("https://valor.globo.com/busca?q=", query,
+         "&page=1&order=recent&from=",
+         year, "-", sprintf("%02d", month),"-", sprintf("%02d", day),
+         "T00%3A00%3A00-0300&to=",
+         year, "-", sprintf("%02d", month),"-", sprintf("%02d", day),
+         "T23%3A59%3A59-0300")
+}
+
+# from https://stackoverflow.com/questions/62441376/r-check-if-a-date-is-valid
+checkdate <- function(y, m, d) {
+  tryCatch(lubridate::is.Date(as.Date(paste(y, m, d, sep = '-'))),
+           error = function(e) return(FALSE))
+}
+
+getAllLinksValor <- function(query, year){
+  results <- vector()
+  p <- progressr::progressor(365)
+
+  for(month in 1:12){
+    for(day in 1:31){
+      p()
+      if(checkdate(year, month, day)){
+        link <- getValorQueryLink(query, day, month, year)
+
+        webpage <- try(getWebpage(link), silent = TRUE)
+        if(class(webpage)[1] != "try-error"){
+          tmp_news <- unique(filterNewsPages(webpage, "valor"))
+          news <- c()
+
+          url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+
+          for(webpage in tmp_news){
+            webpage <- webpage %>%
+              getWebpage() %>%
+              rvest::html_elements("meta") %>%
+              tail(1) %>%
+              as.character() %>%
+              stringr::str_extract(url_pattern) %>%
+              substr(1, nchar(.) - 1)
+
+            news <- c(news, webpage)
+          }
+
+          results <- c(results, news)
+        }
+      }
+    }
+  }
+  return(unique(results))
+}
+
 #' @export
 getAllLinks <- function(query, year, dirname, journal = "folha"){
   if(is.null(journal)) journal <- "folha"
@@ -213,6 +284,9 @@ getAllLinks <- function(query, year, dirname, journal = "folha"){
     result <- getAllLinksFolha(query, year)
   if(journal == "estadao")
     result <- getAllLinksEstadao(query, year)
+  if(journal == "valor"){
+    result <- getAllLinksValor(query, year)
+  }
 
   write.table(result, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE)
   return(result)
