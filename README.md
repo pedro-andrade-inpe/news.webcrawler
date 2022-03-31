@@ -19,7 +19,7 @@ news.webcrawler::downloadQuery("procrastinar", 2018:2020, "folha")
 
 news.webcrawler::downloadQuery("procrastinar", 2018:2020, "estadao")
 
-news.webcrawler::downloadQuery("procrastinar", 2018, "valor")
+news.webcrawler::downloadQuery("procrastinar", 2018:2020, "valor")
 ```
 
 If the connection fails and the command stop without reading all files, you can just run it again and it will continue from the last successful download.
