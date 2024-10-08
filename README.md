@@ -7,6 +7,7 @@ To install the package:
 ```R
 install.packages("devtools")
 
+devtools::install_github("wrathematics/dequer", upgrade = "always")
 devtools::install_github("pedro-andrade-inpe/news.webcrawler", upgrade = "always")
 ```
 

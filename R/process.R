@@ -97,6 +97,7 @@ saveLinks <- function(links, directory){
   p <- progressr::progressor(total)
   for(link in links){
     p()
+    message(paste0("Saving ", link))
     saveLink(link, directory)
   }
 }
@@ -136,23 +137,36 @@ stringAsFileName <- function(mystring)
 
 #' @export
 saveLink <- function(link, directory){
-  filename <- substr(link, 9, nchar(link)) %>%
-    stringAsFileName() %>%
-    paste0(".txt")
+  tryCatch({
+    filename <- substr(link, 9, nchar(link)) %>%
+      stringAsFileName() %>%
+      paste0(".txt")
 
-  outputFile <- paste0(directory, "/", filename)
+    outputFile <- paste0(directory, "/", filename)
 
-  if(!file.exists(outputFile)){
-    content <- getContent(link)
-    write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
-  }
+    if(!file.exists(outputFile)){
+      content <- getContent(link)
+      write.table(content, outputFile, row.names = FALSE, col.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
+    }
+  },
+  error = function(cond) {
+    message(paste("URL does not seem to exist:", link))
+    message("Here's the original error message:")
+    message(conditionMessage(cond))
+  },
+  warning = function(cond) {
+    message(paste("URL caused a warning:", link))
+    message("Here's the original warning message:")
+    message(conditionMessage(cond))
+  })
 }
 
 #' @export
 getWebpage <- function(link){
-  link = url(link, "rb")
-  result <- rvest::read_html(link, options = "RECOVER")
-  close(link)
+  result <- link %>%
+    httr::GET(config = httr::config(ssl_verifypeer = FALSE)) %>%
+    rvest::read_html()
+
   return(result)
 }
 
@@ -168,7 +182,7 @@ getAllLinksFolha <- function(query, year){
   while(length(mystack) > 0){
     p()
     next_page <- dequer::pop(mystack)
-    #message(paste0("Procesing ", next_page, "\n"))
+    message(paste0("Procesing ", next_page, "\n"))
     webpage <- getWebpage(next_page)
 
     news <- filterNewsPages(webpage, "folha")
